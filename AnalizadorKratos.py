@@ -1,7 +1,12 @@
 
-
+tokens_to_text = {
+    
+}
 
 def analizador(palabra : str = ''):
+
+    strTokens = ''
+    strErrores =  ''
 
 
 

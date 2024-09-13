@@ -92,12 +92,87 @@ class analizador_lex():
             "endwhile": 160,
         }
 
+        self.token_regresivos = {102, 103, 104, 109, 111, 113, 116, 126, 500, 501, 503, 504, 505, 507,}
+
+        self.tokem_to_msj = {
+            100:  "Reservada" ,
+            101:  "Identificador" ,
+            102:  "Entero" ,
+            103:  "Real" ,
+            104:  "Not Cient." ,
+            105:  "Suma" ,
+            106:  "Resta" ,
+            107:  "Multi" ,
+            108:  "Division" ,
+            109:  "Asignacion" ,
+            110:  "Igual" ,
+            111:  "Menor" ,
+            112:  "Menor igual" ,
+            113:  "Mayor" ,
+            114:  "Mayor igual" ,
+            115:  "Diferente" ,
+            116:  "NOT" ,
+            117:  "AND" ,
+            118:  "OR" ,
+            119:  "Abre parent." ,
+            120:  "Cierra parent." ,
+            121:  "Abre corch." ,
+            122:  "Cierra corch." ,
+            123:  "Punto y coma" ,
+            124:  "Coma" ,
+            125:  "Caracter" ,
+            126:  "String" ,
+            127:  "Coment. linea" ,
+            128:  "Modulo" ,
+            129:  "Cierra llave" ,
+            130:  "Abre llave" ,
+            131:  "_lib_" ,
+            132:  "_library_" ,
+            133:  "_class_" ,
+            134:  "_int_" ,
+            135:  "_float_" ,
+            136:  "_char_" ,
+            137:  "_string_" ,
+            138:  "_bool_" ,
+            139:  "_if_" ,
+            140:  "_else_" ,
+            141:  "_elseif_" ,
+            142:  "_do_" ,
+            143:  "_dowhile_" ,
+            144:  "_enddo_" ,
+            145:  "_while_" ,
+            146:  "_input_" ,
+            147:  "_output_" ,
+            148:  "_def_" ,
+            149:  "_as_" ,
+            150:  "_cons_" ,
+            151:  "_array_" ,
+            152:  "_endclass_" ,
+            153:  "_private_" ,
+            154:  "_public_" ,
+            155:  "_protected_" ,
+            156:  "_list_" ,
+            157:  "_main_" ,
+            158:  "_end_" ,
+            159:  "_endif_" ,
+            160:  "_endwhile_" ,
+            500: "e500: real espera digito",
+            501: "e501: se esperaba digito, + o -",
+            502: "e502: se esperaba digito",
+            503: "e503: se esperaba &",
+            504: "e504: se esperaba |",
+            505: "e505: error al declarar caracter",
+            506: "e506: . o _ invalidos, caractert desconocido",
+            507: "e507: solo un caracter entre comillas",
+            508: "e508: comillas esperan ser cerradas",
+        }
+
         self.lexema = ' '
         self.lexema_simple = ' '
         self.caracter = ''
         self.posicion = 0
         self.edo = 0
-        self.palabra = palabra
+        self.palabra = palabra + ' '
         self.col = 0
 
     def relaciona(self, c):
@@ -127,6 +202,10 @@ class analizador_lex():
 
 
     def get_token(self):
+        """
+        Retorna un token de la cadena analizada paso por paso en forma de tupla
+        ej: (109, '=', 'Asignacion')
+        """
         self.lexema = ' '
         self.lexema_simple = ' '
         self.edo = 0
@@ -140,7 +219,7 @@ class analizador_lex():
             if(self.caracter != '\n' and self.caracter != ' '):
                 self.lexema += self.caracter
             
-            self.lexema += self.caracter
+            self.lexema_simple += self.caracter
 
             if (self.edo == 101): # si es un identificador
                 self.ajustar_puntero()
@@ -154,14 +233,23 @@ class analizador_lex():
                 if self.edo >= 500: # ERROR
                     pass
 
+
                 if self.edo >= 100 and self.edo < 500: # TOKEN VALIDO
                     pass
                 
+                if self.edo in self.token_regresivos:
+                    self.ajustar_puntero()
+
+                # guardamos un temporal del lexema 
+                cadena_temp = self.lexema_simple.strip()
+
                 #reiniciamos variables
                 self.lexema = ''
                 self.lexema_simple = ''
                 self.posicion += 1
-                return self.edo
+
+                #retornamos la tupla del token
+                return self.edo, cadena_temp, self.tokem_to_msj[self.edo]
             
             self.posicion += 1
 
@@ -169,7 +257,7 @@ class analizador_lex():
 
 if(__name__ == '__main__'):
 
-    cadena = 'myvar = 5 + 4.1 if'
+    cadena = 'myvar = 5+ 4.1 !if == _d'
 
     lex = analizador_lex(cadena)
     
@@ -178,8 +266,7 @@ if(__name__ == '__main__'):
     while token != 100:
         print(token)
         token = lex.get_token()
-
-    pass
+    
 
 
 
