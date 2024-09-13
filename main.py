@@ -14,7 +14,7 @@ def main(page: ft.Page):
 
     def clic_analizar(e = None):
 
-        strTokens, strErrores = AnalizadorKratos.analizador(txt_codigo.value )
+        strTokens, strErrores = AnalizadorKratos.analizador(txt_codigo.value)
         txt_tokens.value = strTokens
         txt_errores.value = strErrores
 
