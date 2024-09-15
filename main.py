@@ -6,8 +6,12 @@ def main(page: ft.Page):
     page.title = 'Analizador Kratos'
     #page.window.width = 1100
     #page.window.height = 600
+    page.fonts = {
+        'JetBrains' : 'fonts/JetBrainsMono-VariableFont_wght.ttf'
+    }
     page.theme = ft.Theme(
-        color_scheme_seed=ft.colors.PINK
+        color_scheme_seed=ft.colors.PINK,
+        font_family='JetBrains'
     )
     page.theme_mode = ft.ThemeMode.LIGHT
     #page.add(ft.SafeArea(ft.Text("Analizador Kratos1", text_align='center', expand=True),))
@@ -15,7 +19,8 @@ def main(page: ft.Page):
     def clic_analizar(e = None):
         codigo = str(txt_codigo.value)
         codigo = codigo.replace('\n', r' ')
-        print('CODIGO: ', codigo[0], type(codigo[0]))
+        
+        #print('CODIGO: ', codigo[0], type(codigo[0]))
 
         strTokens = ''
         strTokens, strErrores = AnalizadorKratos.analizador(codigo)
@@ -28,6 +33,34 @@ def main(page: ft.Page):
 
         page.update()
 
+    def limpiar_campos(e=None):
+        txt_codigo.value = ''
+        txt_tokens.value = ''
+        txt_errores.value = ''
+        page.update()
+
+    prueba_cod = """class mi_program
+def public A,B, res as int;
+def private X as float;
+
+main()
+   input(A,B);
+   res = A+ B;
+   output("El resultado es: ", res);
+   input(X);
+   if (X == res)
+       output ("son iguales");
+   else
+      input(Y);
+      if (X != Y)
+         output("no son iguales");
+      endif
+   endif
+end
+
+endclass
+    """
+
     txt_codigo = ft.TextField(
         label="// Código",
         multiline=True,
@@ -37,6 +70,7 @@ def main(page: ft.Page):
         expand=True,
         expand_loose=True,
         bgcolor=ft.colors.SURFACE,
+        value= prueba_cod   
     )
 
     columna_izq = ft.Column(
@@ -53,9 +87,14 @@ def main(page: ft.Page):
         hint_text='// Tu código',
         expand=True,
         expand_loose=True,
-        value=' ',
+        value='',
         read_only=True,
         bgcolor=ft.colors.SURFACE,
+        text_style= ft.TextStyle(
+            ft.colors.LIGHT_BLUE_800,
+        ),
+        border_color=ft.colors.LIGHT_BLUE_700,
+        border_width=2,
     )
 
     txt_errores = ft.TextField(
@@ -66,9 +105,11 @@ def main(page: ft.Page):
         hint_text='// Tu código',
         expand=True,
         expand_loose=True,
-        value=' ',
+        value='',
         read_only=True,
         bgcolor=ft.colors.SURFACE, 
+        border_color=ft.colors.RED_700,
+        border_width=2,
     )
 
     columna_der = ft.Column(
@@ -90,6 +131,7 @@ def main(page: ft.Page):
     btnLimpiar = ft.ElevatedButton(
         text='Limpiar',
         icon=ft.icons.CLEANING_SERVICES,
+        on_click=limpiar_campos
     )
 
     btnAnalizar = ft.ElevatedButton(
@@ -102,7 +144,11 @@ def main(page: ft.Page):
     botones = ft.Row(
         controls=[
             btnAbrir,btnGuardar, btnLimpiar, btnAnalizar
-        ]
+        ],
+        #expand=True,
+        alignment=ft.MainAxisAlignment.START,
+        scroll=ft.ScrollMode.ALWAYS,
+        wrap=True,
     )
 
     contenedor_principal = ft.Container(
@@ -129,6 +175,7 @@ def main(page: ft.Page):
             controls=[
                 ft.Text(
                     value='Analizador Kratos 2.0',
+                    size=24,
                     ),
                 contenedor_principal,
             ],
@@ -137,5 +184,8 @@ def main(page: ft.Page):
         )
     )
     
+
+
+    txt_codigo.value = prueba_cod
 
 ft.app(main)

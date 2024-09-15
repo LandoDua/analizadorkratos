@@ -153,7 +153,7 @@ dict_errores_sintax = {
 
 def analizador(codigo : str = ''):
     codigo = codigo.replace('\n', ' ')
-    print('CODIGO: ', codigo)
+    #print('CODIGO: ', codigo)
     strTokens = ''
     strErrores =  ''  
 
@@ -234,7 +234,7 @@ def analizador(codigo : str = ''):
                     strTokens += f'{token[1]}:\t {token[2]}\n'
 
                 tope_pila = pila_prod[-1]
-                print(f'nuevo token: {token}')
+                #print(f'nuevo token: {token}')
 
             else: # si son diferentes
                 strErrores += token[1]+ ':\t' + get_add_error_sintaxix(0)
