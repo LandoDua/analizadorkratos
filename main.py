@@ -13,14 +13,20 @@ def main(page: ft.Page):
     #page.add(ft.SafeArea(ft.Text("Analizador Kratos1", text_align='center', expand=True),))
 
     def clic_analizar(e = None):
+        codigo = str(txt_codigo.value)
+        codigo = codigo.replace('\n', r' ')
+        print('CODIGO: ', codigo[0], type(codigo[0]))
 
-        strTokens, strErrores = AnalizadorKratos.analizador(txt_codigo.value)
+        strTokens = ''
+        strTokens, strErrores = AnalizadorKratos.analizador(codigo)
+
+        strErrores = '\n' + strErrores
+        strErrores = strErrores.replace('\n:	 e506: . o _ invalidos, caractert desconocido', '')
+
         txt_tokens.value = strTokens
         txt_errores.value = strErrores
 
         page.update()
-
-        pass
 
     txt_codigo = ft.TextField(
         label="// Código",
@@ -62,7 +68,7 @@ def main(page: ft.Page):
         expand_loose=True,
         value=' ',
         read_only=True,
-        bgcolor=ft.colors.SURFACE,
+        bgcolor=ft.colors.SURFACE, 
     )
 
     columna_der = ft.Column(
@@ -77,7 +83,7 @@ def main(page: ft.Page):
     )
 
     btnGuardar = ft.ElevatedButton(
-        text='Guardar',
+        text='Guardar',     
         icon=ft.icons.SAVE,
     )
 

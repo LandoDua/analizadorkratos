@@ -152,6 +152,8 @@ dict_errores_sintax = {
 
 
 def analizador(codigo : str = ''):
+    codigo = codigo.replace('\n', ' ')
+    print('CODIGO: ', codigo)
     strTokens = ''
     strErrores =  ''  
 
@@ -180,6 +182,7 @@ def analizador(codigo : str = ''):
         strTokens += f'{token[1]}:\t {token[2]}\n'
     if token[0] >= 500 and token[0] < 600:
         strErrores += f'{token[1]}:\t {token[2]}\n'
+        strTokens += f'{token[1]}:\t {token[2]}\n'
 
     
 
@@ -194,7 +197,8 @@ def analizador(codigo : str = ''):
                 strTokens += f'{token[1]}:\t {token[2]}\n'
             if token[0] >= 500 and token[0] < 600:
                 strErrores += f'{token[1]}:\t {token[2]}\n'
-                
+                strTokens += f'{token[1]}:\t {token[2]}\n'
+
             continue
 
         # cacheo de tokens y errores LEXICOS
@@ -205,6 +209,7 @@ def analizador(codigo : str = ''):
                 strTokens += f'{token[1]}:\t {token[2]}\n'
             if token[0] >= 500 and token[0] < 600:
                 strErrores += f'{token[1]}:\t {token[2]}\n'
+                strTokens += f'{token[1]}:\t {token[2]}\n'
 
             continue
 
@@ -226,6 +231,7 @@ def analizador(codigo : str = ''):
                     strTokens += f'{token[1]}:\t {token[2]}\n'
                 if token[0] >= 500 and token[0] < 600:
                     strErrores += f'{token[1]}:\t {token[2]}\n'
+                    strTokens += f'{token[1]}:\t {token[2]}\n'
 
                 tope_pila = pila_prod[-1]
                 print(f'nuevo token: {token}')
@@ -273,23 +279,24 @@ def analizador(codigo : str = ''):
 
 if(__name__ == '__main__'):
 
-    codigo_prueba = """class mi_program
-def public A , B, res as int;
+    codigo_prueba = """
+class mi_program
+def public A,B, res as int;
 def private X as float;
 
 main()
-input(A,B);
-res = A+ B;
-output("El resultado es: ", res);
-input(X);
-if (X == res)
-output ("son iguales");
-else
-input(Y);
-if (X != Y)
-output("no son iguales");
-endif
-endif
+   input(A,B);
+   res = A+ B;
+   output("El resultado es: ", res);
+   input(X);
+   if (X == res)
+       output ("son iguales");
+   else
+      input(Y);
+      if (X != Y)
+         output("no son iguales");
+      endif
+   endif
 end
 
 endclass
