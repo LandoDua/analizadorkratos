@@ -150,8 +150,22 @@ dict_errores_sintax = {
 }
 
 
+tipos_to_strig = {
+	0: 'int',
+	1: 'float',
+	2: 'char',
+	3: 'string',
+	4: 'bool', 
+}
+
+
 
 def analizador(codigo : str = ''):
+
+    list_identificadores = []
+
+    tabla_id = dict()
+
     codigo = codigo.replace('\n', ' ')
     #print('CODIGO: ', codigo)
     strTokens = ''
@@ -168,8 +182,24 @@ def analizador(codigo : str = ''):
         #    pila_prod.append(elemento)
         pila_prod.extend(vecProduccion[n])
         
-    
+    def agregar_identificador(*nombres, tipo = 1):
+        global strErrores
+        """"
+        verificar tabla de identificadores
+        agrega el nuevo identificador con tipo si no existe
+        retorna el error si si existe
+        
+        """
+        for nombre in nombres:
+            if nombre not in tabla_id:
+                tabla_id[nombre] = tipo
+                print(f'agregando {nombre} como {tipo}')
+            else:
+                strErrores += f'\nDUPLICIDAD de variable {nombre}'
+                pass
 
+
+    
 
     pila_prod = [100,0]
     sintaxis_correcta = False
@@ -186,7 +216,7 @@ def analizador(codigo : str = ''):
 
     
 
-    
+    agregando_identificadores = False
 
     while True:
         #ignoramos los tokens de comentario y pedimos otro token
@@ -224,6 +254,22 @@ def analizador(codigo : str = ''):
                 break
 
             elif tope_pila == token[0]: # si son iguales
+
+                if token[0] == 148:
+                    agregando_identificadores = True
+
+                if token[0] == 101 and agregando_identificadores: # si el token es un identificador
+                    list_identificadores.append(token[1])
+                    
+
+                if token[0] in {102, 103, 125, 126} and agregando_identificadores:
+                    agregar_identificador(*list_identificadores, tipo=token[0])
+                    list_identificadores = []
+                    agregando_identificadores = False
+                    pass
+
+
+
                 pila_prod.pop()
                 token =  lex.get_token()
 
@@ -232,6 +278,8 @@ def analizador(codigo : str = ''):
                 if token[0] >= 500 and token[0] < 600:
                     strErrores += f'{token[1]}:\t {token[2]}\n'
                     strTokens += f'{token[1]}:\t {token[2]}\n'
+
+                
 
                 tope_pila = pila_prod[-1]
                 #print(f'nuevo token: {token}')
@@ -271,7 +319,7 @@ def analizador(codigo : str = ''):
 
 
     #print(strTokens, strTokens)  
-
+    print(tabla_id)
     #strTokens += f'{token[1]}:\t {token[2]}\n'
     return (strTokens , strErrores)
 
