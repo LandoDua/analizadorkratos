@@ -26,7 +26,7 @@ def main(page: ft.Page):
         strTokens, strErrores = AnalizadorKratos.analizador(codigo)
 
         strErrores = '\n' + strErrores
-        #strErrores = strErrores.replace('\n:	 e506: . o _ invalidos, caractert desconocido', '')
+        strErrores = strErrores.replace('\n:	 e506: . o _ invalidos, caractert desconocido', '')
 
         txt_tokens.value = strTokens
         txt_errores.value = strErrores

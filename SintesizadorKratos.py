@@ -60,7 +60,7 @@ vecProduccion = [
     [136],
     [138],
     [137],
-    [158, 10, 120, 119, 157], 
+    [158, 10, 120, 119, 157],
     [],
     [10, 123, 11],
     [10, 123, 28],
@@ -68,45 +68,45 @@ vecProduccion = [
     [10, 30],
     [10, 33],
     [10, 34],
-    [1009, 15, 1002, 109, 1001, 12], # esta es una produccion modificada con acciones
+    [15, 109, 12],
     [13, 101],
     [],
     [122, 14, 15, 121],
     [],
     [14, 15, 124],
-    [16, 1004, 17],
+    [16, 17],
     [],
-    [15, 1006, 118],
-    [18, 1003, 19],
+    [15, 118],
+    [18, 19],
     [],
-    [17, 1005, 117],
+    [17, 117],
     [116, 20],
     [20],
     [21, 23],
     [],
-    [1010, 23, 22],
-    [1011, 110],
-    [1011, 115],
-    [1011, 111],
-    [1011, 112],
-    [1011, 113],
-    [1011, 114],
-    [1004, 24, 25],
+    [23, 22],
+    [110],
+    [115],
+    [111],
+    [112],
+    [113],
+    [114],
+    [24, 25],
     [],
-    [23, 1006, 105],
-    [23, 1006, 106],
-    [26, 1003, 27],
-    [25, 1005, 107],
-    [25, 1005, 108],
-    [25, 1005, 128],
+    [23, 105],
+    [23, 106],
+    [26, 27],
+    [25, 107],
+    [25, 108],
+    [25, 128],
     [],
-    [1001, 102],
-    [1001, 103],
-    [1001, 104],
-    [1001, 125],
-    [1001, 126],
-    [1008, 120, 15, 1007, 119],
-    [1001, 12],
+    [102],
+    [103],
+    [104],
+    [125],
+    [126],
+    [120, 15, 119],
+    [12],
     [120, 4, 101, 119, 146],
     [120, 14, 15, 119, 147],
     [159, 32, 31, 10, 120, 15, 119, 139],
@@ -115,11 +115,11 @@ vecProduccion = [
     [10, 140],
     [],
     [160, 10, 120, 15, 119, 145],
-    [144, 120, 15, 119, 143, 10, 142],
+    [144, 120, 15, 119, 143, 10, 142]
 ]
 
 dict_errores_sintax = {
-    600:"e600: ERROR DE SINTAXIS",
+    600: "e600: ERROR DE SINTAXIS",
     601:"e601: ERROR DE SINTAXIS: Se esperaba lib o class",
     602:"e602: ERROR DE SINTAXIS: Se esperaba lib",
     603:"e603: ERROR DE SINTAXIS: Se esperaba def",
@@ -173,9 +173,8 @@ def analizador(codigo : str = ''):
     global strTokens
 
     list_identificadores = []
-    pila_operadores = []
-    pila_tipos = []
-    tabla_simbolos = dict()
+
+    tabla_id = dict()
 
     codigo = codigo.replace('\n', ' ')
     #print('CODIGO: ', codigo)
@@ -204,9 +203,9 @@ def analizador(codigo : str = ''):
 
         for nombre in nombres:
             
-            if nombre not in tabla_simbolos:
+            if nombre not in tabla_id:
                 tipo_temp = dict_conversion_tipos[tipo]
-                tabla_simbolos[nombre] = tipo_temp
+                tabla_id[nombre] = tipo_temp
                 print(f'agregando {nombre} como {tipo_temp}')
             else:
                 strErrores += f'\nDUPLICIDAD de variable {nombre}'
@@ -333,7 +332,7 @@ def analizador(codigo : str = ''):
 
 
     #print(strTokens, strTokens)  
-    print(tabla_simbolos)
+    print(tabla_id)
     #strTokens += f'{token[1]}:\t {token[2]}\n'
     return (strTokens , strErrores)
 
