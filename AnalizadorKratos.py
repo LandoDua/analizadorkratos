@@ -165,6 +165,36 @@ tipos_to_strig = {
 	4: 'bool', 
 }
 
+tabla_tipos = [
+    #105, 106, 107, 108, 128, 117, 118, 110, 114, 112,	115
+    #  +,   -,   *,   /,   %,  &&,  ||,  ==,  >=,  <=,  != 
+    [  0,   0,   0,   1,   0,  -1,  -1,   4,   4,   4,   4], # int-int
+    [  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4], # int-float
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # int-char
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # int-string
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # int-bool
+    [  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4], # float-int
+    [  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4], # float-float
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # float-char
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # float-string
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # float-bool
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # char-int
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # char-float
+    [  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4], # char-char
+    [  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # char-string
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # char-bool
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # string-int
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # string-float
+    [  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # string-char
+    [  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4], # string-string
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # string-bool
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # bool-int
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # bool-float
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # bool-char
+    [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # bool-string
+    [ -1,  -1,  -1,  -1,  -1,   4,   4,   4,  -1,  -1,   4], # bool-bool
+]
+
 strErrores = ''
 strTokens = ''  
 
@@ -181,6 +211,8 @@ def analizador(codigo : str = ''):
     #print('CODIGO: ', codigo)
     strTokens = ''
     strErrores =  ''  
+
+
 
     def get_add_error_sintaxix(n_error = 0):
         msg_error = dict_errores_sintax.get(n_error, 'DESCONOCIDO: ERROR DE SINTAXIS\n')
@@ -211,7 +243,46 @@ def analizador(codigo : str = ''):
             else:
                 strErrores += f'\nDUPLICIDAD de variable {nombre}'
                 pass
+    
+    def verificar_tipos_compatibles(tipo1: int, tipo2: int, operador: int):
+        """ verifica la compatiblidad de dos tipos sobre un operador
+        retorna el resultado, sino exite retorna float (1) y llama el error
+        """
+        global strErrores
+        renglon = (tipo1 * 5) + tipo2
+
+        columna = 0
+
+        if operador == 105:   # +
+            columna = 0
+        elif operador == 106: # -
+            columna = 1
+        elif operador == 107: # *
+            columna = 2
+        elif operador == 108: # /
+            columna = 3
+        elif operador == 128: # %
+            columna = 4
+        elif operador == 117: # and
+            columna = 5
+        elif operador == 118: # or
+            columna = 6
+        elif operador == 110: # ==
+            columna = 7
+        elif operador == 114: # >=
+            columna = 8
+        elif operador == 112: # <=
+            columna = 9
+        elif operador == 115: # !=
+            columna = 10
         
+        tipo_resultado = tabla_tipos[renglon][columna]
+
+        if tipo_resultado == -1: # error entre tipos
+            strErrores += f"ERROR SEM. entre tipos entre {tipos_to_strig[tipo1]} y {tipos_to_strig[tipo2]} en {operador}\n" # marcamos el error
+            return 1 # parchamos con float (1)
+
+        return tipo_resultado
     
 
     pila_prod = [100,0]
