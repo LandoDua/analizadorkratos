@@ -39,6 +39,11 @@ def main(page: ft.Page):
         txt_errores.value = ''
         page.update()
 
+    def abrir_archivo(e: ft.FilePickerResultEvent):
+        print(f'{file_picker.result.files[0].path}')
+
+
+
     prueba_cod = """class mi_program
 def public A,B, res as int;
 def private X as float;
@@ -61,6 +66,10 @@ end
 endclass
     """
 
+    file_picker = ft.FilePicker(on_result=abrir_archivo)
+    page.overlay.append(file_picker)
+    page.update()
+
     txt_codigo = ft.TextField(
         label="// Código",
         multiline=True,
@@ -80,7 +89,7 @@ endclass
     )
 
     txt_tokens = ft.TextField(
-        label="// Token",
+        label="// Tabla de Simbolos",
         multiline=True,
         min_lines=30,
         max_lines=30,
@@ -121,6 +130,8 @@ endclass
     btnAbrir = ft.ElevatedButton(
         text='Abrir',
         icon=ft.icons.FILE_OPEN,
+        on_click= lambda _: file_picker.pick_files(allowed_extensions=['txt', ' kcode'])
+    
     )
 
     btnGuardar = ft.ElevatedButton(
@@ -141,14 +152,50 @@ endclass
         on_click= clic_analizar,
     )
 
+    btnCompilar = ft.ElevatedButton(
+        text='Compilar',
+        icon=ft.icons.BUILD_CIRCLE,
+        color=ft.colors.BLUE_300,
+        # on_click= clic_analizar,
+        disabled=True
+    )
+
     botones = ft.Row(
         controls=[
-            btnAbrir,btnGuardar, btnLimpiar, btnAnalizar
+            btnAbrir,btnGuardar, btnLimpiar, btnAnalizar, btnCompilar
         ],
         #expand=True,
         alignment=ft.MainAxisAlignment.START,
         scroll=ft.ScrollMode.ALWAYS,
         wrap=True,
+    )
+
+    txt_pila_operadores = ft.TextField(
+        label="Pila de Operadores",
+        #expand=True,
+        #expand_loose=True,
+        # value='',
+        read_only=True,
+        bgcolor=ft.colors.SURFACE,
+        text_style= ft.TextStyle(
+            ft.colors.BLACK87,
+        ),
+        border_color=ft.colors.BLACK87,
+        border_width=2,
+    )
+
+    txt_pila_tipos = ft.TextField(
+        label="Pila de Tipos",
+        #expand=True,
+        #expand_loose=True,
+        # value='',
+        #read_only=True,
+        bgcolor=ft.colors.SURFACE,
+        text_style= ft.TextStyle(
+            ft.colors.BLACK87,
+        ),
+        border_color=ft.colors.BLACK87,
+        border_width=2,
     )
 
     contenedor_principal = ft.Container(
@@ -165,6 +212,8 @@ endclass
                     controls=[columna_izq, columna_der],
                     expand=True
                 ),
+                txt_pila_operadores,
+                txt_pila_tipos,
                 botones
             ]
         )
