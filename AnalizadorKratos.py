@@ -199,6 +199,8 @@ strErrores = ''
 strTokens = ''  
 
 def analizador(codigo : str = ''):
+    """Analiza el codigo como parametro
+    retorna (strTokens, strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores)"""
     global strErrores 
     global strTokens
 
@@ -206,6 +208,7 @@ def analizador(codigo : str = ''):
     pila_operadores = []
     pila_tipos = []
     tabla_simbolos = dict()
+    ultimo_token = 0 # solo lo usamos para aculumar el ultimo token analizado antes de una acción
 
     codigo = codigo.replace('\n', ' ')
     #print('CODIGO: ', codigo)
@@ -225,6 +228,8 @@ def analizador(codigo : str = ''):
         #    pila_prod.append(elemento)
         pila_prod.extend(vecProduccion[n])
         
+
+    ########### METODOS DE SEMANTICO ###########      
     def agregar_identificador(*nombres, tipo = 1):
         """"
         verificar tabla de identificadores
@@ -286,7 +291,7 @@ def analizador(codigo : str = ''):
     
 
     pila_prod = [100,0]
-    sintaxis_correcta = False
+    codigo_correcto = False
 
     lex = a_lex.analizador_lex(codigo)
 
@@ -312,7 +317,6 @@ def analizador(codigo : str = ''):
             if token[0] >= 500 and token[0] < 600:
                 strErrores += f'{token[1]}:\t {token[2]}\n'
                 strTokens += f'{token[1]}:\t {token[2]}\n'
-
             continue
 
         # cacheo de tokens y errores LEXICOS
@@ -329,15 +333,21 @@ def analizador(codigo : str = ''):
 
         tope_pila = pila_prod[-1]
 
+        # cacheo de acciones semanticas
+
+
         # analizador SINTACTICO
         if tope_pila >= 100: # si se trata de un elemento terminal
             if tope_pila == 100 and token[0] == 100: # si ambos sin finales de cadena $
                 #print('SINTAXIS CORRECTA')
                 strTokens = f'SINTAXIS CORRECTA\n {strTokens} SINTAXIS CORRECTA'
-                sintaxis_correcta = True
+                codigo_correcto = True
                 break
 
             elif tope_pila == token[0]: # si son iguales
+                ultimo_token = token[0]
+
+
 
                 if token[0] == 148: # cuando nos llega un _def_, cambiamos a modo agregar variables
                     agregando_identificadores = True
@@ -350,10 +360,9 @@ def analizador(codigo : str = ''):
                     agregar_identificador(*list_identificadores, tipo=token[0])
                     list_identificadores = []
                     agregando_identificadores = False
-                    pass
+                    
 
-                if not agregando_identificadores:
-                    pass
+                
 
                 pila_prod.pop()
                 token =  lex.get_token()
@@ -417,11 +426,11 @@ class mi_program
 def public A,B, res as int;
 def private X as float;
 def private nombre as string;
-def public A as char;
+
 
 main()
    input(A,B);
-   res = A+ B;
+   res = a;
    
 end
 
