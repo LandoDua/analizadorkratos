@@ -95,7 +95,7 @@ vecProduccion = [
 [],
 [23, 105, 1006],
 [23, 106, 1006],
-[26, 27, 1003],
+[26, 1003, 27],
 [25, 107, 1005],
 [25, 108, 1005],
 [25, 128, 1005],
@@ -407,6 +407,7 @@ def analizador(codigo : str = ''):
             strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
             # aqui invocamos la accion
             pila_prod.pop()
+            tope_pila= pila_prod[-1]
 
 
 

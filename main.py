@@ -10,11 +10,12 @@ def main(page: ft.Page):
         'JetBrains' : 'fonts/JetBrainsMono-VariableFont_wght.ttf'
     }
     page.theme = ft.Theme(
-        color_scheme_seed=ft.colors.PINK,
+        color_scheme_seed=ft.colors.CYAN,
         font_family='JetBrains'
     )
     page.theme_mode = ft.ThemeMode.LIGHT
-    #page.add(ft.SafeArea(ft.Text("Analizador Kratos1", text_align='center', expand=True),))
+    page.padding= 15
+
 
     def clic_analizar(e = None):
         codigo = str(txt_codigo.value)
@@ -35,12 +36,66 @@ def main(page: ft.Page):
 
     def limpiar_campos(e=None):
         txt_codigo.value = ''
+        txt_codigo.label = 'Codigo'
         txt_tokens.value = ''
         txt_errores.value = ''
+
+        page.title = 'Analizador Kratos' 
+
+        page.update()
+    
+    def desplegar_error(error : str):
+        page.snack_bar = ft.SnackBar(
+            ft.Text(error, color=ft.colors.ON_ERROR),
+            bgcolor=ft.colors.ERROR
+        )
+
+        page.snack_bar.open = True
         page.update()
 
     def abrir_archivo(e: ft.FilePickerResultEvent):
-        print(f'{file_picker.result.files[0].path}')
+        #print(f'{file_picker.result.files[0].path}')
+
+        if not file_picker.result.files == None:
+            path_codigo =  file_picker.result.files[0].path
+
+            limpiar_campos()
+
+            page.title = path_codigo
+            txt_codigo.label = file_picker.result.files[0].name
+
+            txt_codigo.value = open(path_codigo, 'r').read()
+            page.update()
+
+    def guarda_archivo(e: ft.FilePickerResultEvent):
+        try:
+            print('Nombre: ', e.name)
+            print('Ruta: ', e.path)
+
+            archivo_temp = open(e.path + '.kcod', 'w')
+            archivo_temp.write(txt_codigo.value)
+            page.title = e.path
+            txt_codigo.label = archivo_temp.name.split('\\')[-1]
+
+
+            archivo_temp.close()
+
+            page.snack_bar = ft.SnackBar(
+            ft.Text(f"Guardado en: {e.path}", color=ft.colors.ON_ERROR),
+            bgcolor=ft.colors.ERROR
+            )
+
+            page.snack_bar.open = True
+
+            page.update()
+
+
+        except:
+            # print('Error al guardar archivo')
+            desplegar_error('Error al guardar archivo')
+
+    
+
 
 
 
@@ -66,12 +121,40 @@ end
 endclass
     """
 
+    def change_theme_mode(e: None):
+        if page.theme_mode == ft.ThemeMode.LIGHT:
+            page.theme_mode = ft.ThemeMode.DARK
+            btn_mode_theme.icon = ft.icons.DARK_MODE
+        else:
+            page.theme_mode = ft.ThemeMode.LIGHT
+            btn_mode_theme.icon = ft.icons.LIGHT_MODE
+        page.update()
+
+    btn_mode_theme = ft.IconButton(
+        icon=ft.icons.LIGHT_MODE if page.theme_mode == ft.ThemeMode.LIGHT else ft.icons.DARK_MODE,
+        on_click= change_theme_mode
+
+    )
+    
+    page.appbar = ft.AppBar(
+        title=ft.Text('Analizador Kratos 2.0', size=24),
+        # bgcolor=ft.colors.PRIMARY,
+        center_title=True,
+        actions=[btn_mode_theme]
+
+    )
+
     file_picker = ft.FilePicker(on_result=abrir_archivo)
     page.overlay.append(file_picker)
+    file_picker_saver = ft.FilePicker(on_result=guarda_archivo)
+    page.overlay.append(file_picker_saver)
     page.update()
 
+    
+    
+
     txt_codigo = ft.TextField(
-        label="// Código",
+        label="Codigo",
         multiline=True,
         min_lines=50,
         max_lines=50,
@@ -85,7 +168,6 @@ endclass
     columna_izq = ft.Column(
         controls=[txt_codigo],
         expand=True,
-        expand_loose=True,
     )
 
     txt_tokens = ft.TextField(
@@ -93,7 +175,6 @@ endclass
         multiline=True,
         min_lines=30,
         max_lines=30,
-        hint_text='// Tu código',
         expand=True,
         expand_loose=True,
         value='',
@@ -111,7 +192,6 @@ endclass
         multiline=True,
         min_lines=30,
         max_lines=30,
-        hint_text='// Tu código',
         expand=True,
         expand_loose=True,
         value='',
@@ -124,19 +204,20 @@ endclass
     columna_der = ft.Column(
         controls=[txt_tokens, txt_errores],
         expand=True,
-        expand_loose=True,
+        
     )
 
     btnAbrir = ft.ElevatedButton(
         text='Abrir',
         icon=ft.icons.FILE_OPEN,
-        on_click= lambda _: file_picker.pick_files(allowed_extensions=['txt', ' kcode'])
+        on_click= lambda _: file_picker.pick_files(allowed_extensions=['txt', 'kcod'],allow_multiple=False)
     
     )
 
     btnGuardar = ft.ElevatedButton(
         text='Guardar',     
         icon=ft.icons.SAVE,
+        on_click= lambda _: file_picker_saver.save_file(dialog_title='Guardar archivo como: ', allowed_extensions=['kcod', 'txt'], file_name=txt_codigo.label)
     )
 
     btnLimpiar = ft.ElevatedButton(
@@ -162,12 +243,15 @@ endclass
 
     botones = ft.Row(
         controls=[
-            btnAbrir,btnGuardar, btnLimpiar, btnAnalizar, btnCompilar
+            ft.Container(ft.Row([btnAbrir,btnGuardar, btnLimpiar,], wrap=True,)) ,
+            ft.Container(ft.Row([btnAnalizar, btnCompilar], wrap=True,alignment=ft.MainAxisAlignment.END))
         ],
         #expand=True,
-        alignment=ft.MainAxisAlignment.START,
+        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
         scroll=ft.ScrollMode.ALWAYS,
         wrap=True,
+        width=10000
+        
     )
 
     txt_pila_operadores = ft.TextField(
@@ -222,10 +306,7 @@ endclass
     page.add(
         ft.Column(
             controls=[
-                ft.Text(
-                    value='Analizador Kratos 2.0',
-                    size=24,
-                    ),
+                
                 contenedor_principal,
             ],
             expand=True,

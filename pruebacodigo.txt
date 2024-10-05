@@ -1,0 +1,20 @@
+class mi_program
+def public A,B, res as int;
+def private X as float;
+
+main()
+   input(A,B);
+   res = A+ B;
+   output("El resultado es: ", res);
+   input(X);
+   if (X == res)
+       output ("son iguales");
+   else
+      input(Y);
+      if (X != Y)
+         output("no son iguales");
+      endif
+   endif
+end
+
+endclass
