@@ -149,12 +149,12 @@ dict_errores_sintax = {
     627:"e627: ERROR DE SINTAXIS: Se esperaba do",
 }
 
-dict_conversion_tipos = {
-    134: 0,
-    135: 1,
-    136: 2,
-    137: 3,
-    138: 4,
+dict_constantes_tipos = {
+    134: 0, # int
+    135: 1, # float
+    136: 2, # char
+    137: 3, # string
+    138: 4, # bool
 }
 
 tipos_to_strig = {
@@ -162,7 +162,18 @@ tipos_to_strig = {
 	1: 'float',
 	2: 'char',
 	3: 'string',
-	4: 'bool', 
+	4: 'bool',
+    105: '+',
+    106: '-',
+    107: '*',
+    108: '/',
+    128: '%',
+    117: 'and',
+    118: 'or',
+    110: '==',
+    114: '>=',
+    112: '<=',
+    115: '!=',
 }
 
 tabla_tipos = [
@@ -200,13 +211,15 @@ strTokens = ''
 
 def analizador(codigo : str = ''):
     """Analiza el codigo como parametro
-    retorna (strTokens, strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores)"""
+    retorna (strTokens, strErrores, __codigo_correcto__, tabla_simbolos, pila_tipos, pila_operadores)"""
     global strErrores 
     global strTokens
 
     list_identificadores = []
     pila_operadores = []
+    pila_operadores_estatica = []
     pila_tipos = []
+    pila_tipos_estatica = []
     tabla_simbolos = dict()
     ultimo_token = 0 # solo lo usamos para aculumar el ultimo token analizado antes de una acción
 
@@ -222,6 +235,8 @@ def analizador(codigo : str = ''):
         return msg_error
 
     def agregar_prod(n_prod: int):
+        """Agrega produccion numero n en la pila de producciones
+        """
         
         n = n_prod
         #for elemento in vecProduccion[n]:
@@ -230,7 +245,7 @@ def analizador(codigo : str = ''):
         
 
     ########### METODOS DE SEMANTICO ###########      
-    def agregar_identificador(*nombres, tipo = 1):
+    def agregar_identificador(*nombres, tipo = 135):
         """"
         verificar tabla de identificadores
         agrega el nuevo identificador con tipo si no existe
@@ -238,11 +253,10 @@ def analizador(codigo : str = ''):
         
         """
         global strErrores
-
         for nombre in nombres:
             
             if nombre not in tabla_simbolos:
-                tipo_temp = dict_conversion_tipos[tipo]
+                tipo_temp = dict_constantes_tipos[tipo]
                 tabla_simbolos[nombre] = tipo_temp
                 print(f'agregando {nombre} como {tipo_temp}')
             else:
@@ -289,9 +303,31 @@ def analizador(codigo : str = ''):
 
         return tipo_resultado
     
+    def ejecutar_accion(n_accion: int):
+        global strErrores
+        if n_accion == 1001:
+            variable = token[1]
+            if token[0] in dict_constantes_tipos: # si lo que llega es una constante, añadimos el tipo
+                pila_tipos.append(dict_constantes_tipos[token[0]])
+                pila_tipos_estatica.append(dict_constantes_tipos[token[0]])
+
+            elif variable in tabla_simbolos: # si lo que llega es una variable que si esta en la tabla de simbolos
+                pila_tipos.append(tabla_simbolos[variable])
+                pila_tipos_estatica.append(tabla_simbolos[variable])
+
+            else: # si no es constante y es una variable sin declarar
+                strErrores += f'ERROR Variable "{variable}" no declarada, añadida como float\n'
+                agregar_identificador(variable)
+                pila_tipos.append(tabla_simbolos[variable])
+                pila_tipos_estatica.append(tabla_simbolos[variable])
+
+
+        pass
 
     pila_prod = [100,0]
-    codigo_correcto = False
+    sintaxis_correcta = False
+    semantica_correcta = True
+
 
     lex = a_lex.analizador_lex(codigo)
 
@@ -341,7 +377,7 @@ def analizador(codigo : str = ''):
             if tope_pila == 100 and token[0] == 100: # si ambos sin finales de cadena $
                 #print('SINTAXIS CORRECTA')
                 strTokens = f'SINTAXIS CORRECTA\n {strTokens} SINTAXIS CORRECTA'
-                codigo_correcto = True
+                sintaxis_correcta = True
                 break
 
             elif tope_pila == token[0]: # si son iguales
@@ -402,10 +438,12 @@ def analizador(codigo : str = ''):
                 break
 
         while pila_prod[-1] >= 1000:
-            print(pila_prod)
-            print( f"ACCAccion semantica encontrada {pila_prod[-1]} con {token[2]}\n")
+            # print(pila_prod)
+            # print( f"ACCAccion semantica encontrada {pila_prod[-1]} con {token[2]}\n")
             strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
             # aqui invocamos la accion
+            ejecutar_accion(pila_prod[-1])
+
             pila_prod.pop()
             tope_pila= pila_prod[-1]
 
@@ -421,8 +459,9 @@ def analizador(codigo : str = ''):
     #print(strTokens, strTokens)  
     print(tabla_simbolos)
     #strTokens += f'{token[1]}:\t {token[2]}\n'
-    return (strTokens , strErrores)
+    codigo_correcto = sintaxis_correcta and semantica_correcta
 
+    return (strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos_estatica, pila_operadores_estatica)
 
 
 if(__name__ == '__main__'):
@@ -436,7 +475,7 @@ def private nombre as string;
 
 main()
    input(A,B);
-   res = A + B * X;
+   res = Z + B * X;
    
 end
 
@@ -444,7 +483,7 @@ endclass
 
 """
 
-    str1, str2 = analizador(codigo=codigo_prueba)
-    print(str1, str2)
+    strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores = analizador(codigo=codigo_prueba)
+    print( strErrores)
 
     pass

@@ -1,6 +1,25 @@
 import flet as ft
 import AnalizadorKratos
 
+code_to_strig = {
+	0: 'int',
+	1: 'float',
+	2: 'char',
+	3: 'string',
+	4: 'bool',
+    105: '+',
+    106: '-',
+    107: '*',
+    108: '/',
+    128: '%',
+    117: 'and',
+    118: 'or',
+    110: '==',
+    114: '>=',
+    112: '<=',
+    115: '!=',
+}
+
 
 def main(page: ft.Page):
     page.title = 'Analizador Kratos'
@@ -24,23 +43,46 @@ def main(page: ft.Page):
         #print('CODIGO: ', codigo[0], type(codigo[0]))
 
         strTokens = ''
-        strTokens, strErrores = AnalizadorKratos.analizador(codigo)
-
+        strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores = AnalizadorKratos.analizador(codigo)
         strErrores = '\n' + strErrores
         strErrores = strErrores.replace('\n:	 e506: . o _ invalidos, caractert desconocido', '')
 
-        txt_tokens.value = strTokens
+        # txt_tokens.value = strTokens
         txt_errores.value = strErrores
+        
+        if codigo_correcto:
+            btnCompilar.disabled = False
+
+        renglon_tabla_simbolos = ''
+
+        txt_tokens.value = ''
+        for variable in tabla_simbolos:
+            tipo = tabla_simbolos[variable]
+            renglon_tabla_simbolos = f'{variable}:\t {code_to_strig[tipo]}\n'
+            txt_tokens.value += renglon_tabla_simbolos
+
+        txt_pila_tipos.value = ''
+        for tipo in pila_tipos:
+            txt_pila_tipos.value += f'{code_to_strig[tipo]}, '
+
+        txt_pila_operadores.value = ''
+        for operador in pila_operadores:
+            txt_pila_operadores.value += f'{code_to_strig[operador]}, '
+
+
+
 
         page.update()
 
     def limpiar_campos(e=None):
         txt_codigo.value = ''
-        txt_codigo.label = 'Codigo'
         txt_tokens.value = ''
         txt_errores.value = ''
+        txt_pila_tipos = ''
+        txt_pila_operadores = ''
 
         page.title = 'Analizador Kratos' 
+        txt_codigo.label = 'Codigo'
 
         page.update()
     
@@ -132,6 +174,7 @@ endclass
 
     btn_mode_theme = ft.IconButton(
         icon=ft.icons.LIGHT_MODE if page.theme_mode == ft.ThemeMode.LIGHT else ft.icons.DARK_MODE,
+        icon_size=24,
         on_click= change_theme_mode
 
     )
@@ -140,7 +183,8 @@ endclass
         title=ft.Text('Analizador Kratos 2.0', size=24),
         # bgcolor=ft.colors.PRIMARY,
         center_title=True,
-        actions=[btn_mode_theme]
+        actions=[btn_mode_theme, ft.Container(width=15)],
+        
 
     )
 
@@ -151,7 +195,7 @@ endclass
     page.update()
 
     
-    
+     
 
     txt_codigo = ft.TextField(
         label="Codigo",
@@ -168,7 +212,7 @@ endclass
     columna_izq = ft.Column(
         controls=[txt_codigo],
         expand=True,
-    )
+    ) 
 
     txt_tokens = ft.TextField(
         label="// Tabla de Simbolos",
