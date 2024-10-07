@@ -11,6 +11,7 @@ code_to_strig = {
     106: '-',
     107: '*',
     108: '/',
+    109: '=',
     128: '%',
     117: 'and',
     118: 'or',
@@ -18,13 +19,14 @@ code_to_strig = {
     114: '>=',
     112: '<=',
     115: '!=',
+    -1: 'MFF',
 }
 
 
 def main(page: ft.Page):
     page.title = 'Analizador Kratos'
-    #page.window.width = 1100
-    #page.window.height = 600
+    #page.window.width = 1500
+    page.window.height = 1060
     page.fonts = {
         'JetBrains' : 'fonts/JetBrainsMono-VariableFont_wght.ttf'
     }
@@ -212,6 +214,8 @@ endclass
     columna_izq = ft.Column(
         controls=[txt_codigo],
         expand=True,
+        col={"sm": 6},
+        height=700
     ) 
 
     txt_tokens = ft.TextField(
@@ -229,6 +233,7 @@ endclass
         ),
         border_color=ft.colors.LIGHT_BLUE_700,
         border_width=2,
+        height=400,
     )
 
     txt_errores = ft.TextField(
@@ -248,6 +253,8 @@ endclass
     columna_der = ft.Column(
         controls=[txt_tokens, txt_errores],
         expand=True,
+        col={"sm": 6},
+        height=700
         
     )
 
@@ -336,25 +343,33 @@ endclass
             expand=True,
 
             controls=[
-                ft.Row(
+                ft.ResponsiveRow(
                     controls=[columna_izq, columna_der],
                     expand=True
                 ),
-                txt_pila_operadores,
-                txt_pila_tipos,
-                botones
-            ]
+            ],
+            scroll=ft.ScrollMode.ALWAYS
         )
     )
     
     page.add(
-        ft.Column(
-            controls=[
-                
-                contenedor_principal,
-            ],
+        ft.Container(
+            content=ft.Column(
+                controls=[
+                    
+                    contenedor_principal,
+                    
+                    txt_pila_operadores,
+                    txt_pila_tipos,
+                    botones
+                ],
+                expand=True,
+                horizontal_alignment= ft.CrossAxisAlignment.CENTER
+            ),
+            bgcolor=ft.colors.PRIMARY_CONTAINER,
+            border_radius=15,
             expand=True,
-            horizontal_alignment= ft.CrossAxisAlignment.CENTER
+            padding=10,
         )
     )
     

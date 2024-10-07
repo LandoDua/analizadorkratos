@@ -167,6 +167,7 @@ tipos_to_strig = {
     106: '-',
     107: '*',
     108: '/',
+    109: '=',
     128: '%',
     117: 'and',
     118: 'or',
@@ -174,6 +175,7 @@ tipos_to_strig = {
     114: '>=',
     112: '<=',
     115: '!=',
+    -1:  'MFF',
 }
 
 tabla_tipos = [
@@ -260,7 +262,7 @@ def analizador(codigo : str = ''):
                 tabla_simbolos[nombre] = tipo_temp
                 print(f'agregando {nombre} como {tipo_temp}')
             else:
-                strErrores += f'\nDUPLICIDAD de variable {nombre}'
+                strErrores += f'ERROR SEM. Duplicidad de variable {nombre}\n'
                 pass
     
     def verificar_tipos_compatibles(tipo1: int, tipo2: int, operador: int):
@@ -298,13 +300,27 @@ def analizador(codigo : str = ''):
         tipo_resultado = tabla_tipos[renglon][columna]
 
         if tipo_resultado == -1: # error entre tipos
-            strErrores += f"ERROR SEM. entre tipos entre {tipos_to_strig[tipo1]} y {tipos_to_strig[tipo2]} en {operador}\n" # marcamos el error
+            strErrores += f"ERROR SEM. entre tipos entre {tipos_to_strig[tipo1]} y {tipos_to_strig[tipo2]} en {tipos_to_strig[operador]}\n" # marcamos el error
             return 1 # parchamos con float (1)
 
         return tipo_resultado
     
+    def ejecutar_operacion():
+        tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
+
+        pila_tipos.pop()
+        pila_tipos.pop()
+        pila_tipos.append(tipo_temp)
+        pila_tipos_estatica.append(tipo_temp)
+
+        pila_operadores.pop()
+
     def ejecutar_accion(n_accion: int):
+        
+
+
         global strErrores
+        # accion 1
         if n_accion == 1001:
             variable = token[1]
             if token[0] in dict_constantes_tipos: # si lo que llega es una constante, añadimos el tipo
@@ -316,13 +332,79 @@ def analizador(codigo : str = ''):
                 pila_tipos_estatica.append(tabla_simbolos[variable])
 
             else: # si no es constante y es una variable sin declarar
-                strErrores += f'ERROR Variable "{variable}" no declarada, añadida como float\n'
+                strErrores += f'ERROR SEM. Variable "{variable}" no declarada, añadida como float\n'
                 agregar_identificador(variable)
                 pila_tipos.append(tabla_simbolos[variable])
                 pila_tipos_estatica.append(tabla_simbolos[variable])
+        
+        # accion 2
+        elif n_accion == 1002 and token[1] == '=':
+            pila_operadores.append(token[0])
+            pila_operadores_estatica.append(token[0])
+
+        # accion 3
+        elif n_accion == 1003:
+            if pila_operadores[-1] in {107, 108, 128}: # si se trata de un { *, /, % }
+                
+                tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
+
+                pila_tipos.pop()
+                pila_tipos.pop()
+                pila_tipos.append(tipo_temp)
+                pila_tipos_estatica.append(tipo_temp)
+
+                pila_operadores.pop()
+
+        # accion 4
+        elif n_accion == 1004:
+            if pila_operadores[-1] in {105, 106}: # si se trata de un { +, - }
+                
+                tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
+
+                pila_tipos.pop()
+                pila_tipos.pop()
+                pila_tipos.append(tipo_temp)
+                pila_tipos_estatica.append(tipo_temp)
+
+                pila_operadores.pop()
+        # accion 5
+        elif n_accion == 1005 and token[1] in {'*', '/', '%'}:
+            pila_operadores.append(token[0])
+            pila_operadores_estatica.append(token[0])
+
+        # accion 6
+        elif n_accion == 1006 and token[1] in {'+', '-',}:
+            pila_operadores.append(token[0])
+            pila_operadores_estatica.append(token[0])
+
+        # accion 7
+        elif n_accion == 1007: # inserta una marca de fondo falso MFF
+            pila_operadores.append(-1)
+            pila_operadores_estatica.append(-1)
+
+        # accion 8
+        elif n_accion == 1008: # remueve una marca de fondo falso MFF
+            if pila_operadores[-1] == -1:
+                pila_operadores.pop()
+            else:
+                print('ERROR LOGICO debimos encontrar un MFF\n\n')
+        
+        # accion 9
+        elif n_accion == 1009:
+            if pila_operadores[-1] == 109:
+                
+                if pila_tipos[-2] != pila_tipos[-1]:
+                    strErrores += f'ERROR SEM. entre tipos en "=" con {tipos_to_strig[pila_tipos[-2]]} y {tipos_to_strig[pila_tipos[-1]]}\n'
+
+                pila_tipos.pop()
+                pila_tipos.pop()
+                pila_operadores.pop()
+        
 
 
-        pass
+
+
+
 
     pila_prod = [100,0]
     sintaxis_correcta = False
@@ -376,7 +458,7 @@ def analizador(codigo : str = ''):
         if tope_pila >= 100: # si se trata de un elemento terminal
             if tope_pila == 100 and token[0] == 100: # si ambos sin finales de cadena $
                 #print('SINTAXIS CORRECTA')
-                strTokens = f'SINTAXIS CORRECTA\n {strTokens} SINTAXIS CORRECTA'
+                strTokens = f'SINTAXIS CORRECTA\n {strTokens} SINTAXIS CORRECTA\n'
                 sintaxis_correcta = True
                 break
 
@@ -468,14 +550,15 @@ if(__name__ == '__main__'):
 
     codigo_prueba = """
 class mi_program
-def public A,B, res as int;
-def private X as float;
+def public A,B, res as float;
+def private X as char;
 def private nombre as string;
+def private nombre as int;
 
 
 main()
    input(A,B);
-   res = Z + B * X;
+   nombre = (X + Y) * X;
    
 end
 
@@ -484,6 +567,6 @@ endclass
 """
 
     strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores = analizador(codigo=codigo_prueba)
-    print( strErrores)
+    print(strTokens, strErrores)
 
     pass
