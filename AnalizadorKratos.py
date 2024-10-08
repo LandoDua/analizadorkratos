@@ -109,13 +109,13 @@ vecProduccion = [
 [12, 1001],
 [120, 4, 101, 119, 146],
 [120, 14, 15, 119, 147],
-[159, 32, 31, 10, 120, 15, 119, 139],
+[159, 32, 31, 10, 1012, 120, 15, 119, 139],
 [],
-[31, 10, 120, 15, 119, 141],
+[31, 10, 1012, 120, 15, 119, 141],
 [10, 140],
 [],
-[160, 10, 120, 15, 119, 145],
-[144, 120, 15, 119, 143, 10, 142],
+[160, 10, 1012, 120, 15, 119, 145],
+[144, 1012, 120, 15, 119, 143, 10, 142],
 ]
 
 dict_errores_sintax = {
@@ -179,43 +179,47 @@ tipos_to_strig = {
 }
 
 tabla_tipos = [
-    #105, 106, 107, 108, 128, 117, 118, 110, 114, 112,	115
-    #  +,   -,   *,   /,   %,  &&,  ||,  ==,  >=,  <=,  != 
-    (  0,   0,   0,   1,   0,  -1,  -1,   4,   4,   4,   4), # int-int
-    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4), # int-float
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-char
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-string
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-bool
-    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4), # float-int
-    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4), # float-float
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-char
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-string
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-bool
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-int
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-float
-    (  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4), # char-char
-    (  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-string
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-bool
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-int
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-float
-    (  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-char
-    (  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4), # string-string
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-bool
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-int
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-float
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-char
-    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-string
-    ( -1,  -1,  -1,  -1,  -1,   4,   4,   4,  -1,  -1,   4), # bool-bool
+    #105, 106, 107, 108, 128, 117, 118, 110, 114, 112,	115  113  111
+    #  +,   -,   *,   /,   %,  &&,  ||,  ==,  >=,  <=,  !=,   >,    <, 
+    (  0,   0,   0,   1,   0,  -1,  -1,   4,   4,   4,   4,   4,   4), # int-int
+    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4,   4,   4), # int-float
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-char
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-string
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # int-bool
+    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4,   4,   4), # float-int
+    (  1,   1,   1,   1,   1,  -1,  -1,   4,   4,   4,   4,   4,   4), # float-float
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-char
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-string
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # float-bool
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-int
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-float
+    (  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4,  -1,  -1), # char-char
+    (  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-string
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # char-bool
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-int
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-float
+    (  3,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-char
+    (  3,  -1,  -1,  -1,  -1,  -1,  -1,   4,  -1,  -1,   4,  -1,  -1), # string-string
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # string-bool
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-int
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-float
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-char
+    ( -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1), # bool-string
+    ( -1,  -1,  -1,  -1,  -1,   4,   4,   4,  -1,  -1,   4,  -1,  -1), # bool-bool
 ]
 
 strErrores = ''
-strTokens = ''  
+strTokens = ''
+semantica_correcta = False
 
 def analizador(codigo : str = ''):
     """Analiza el codigo como parametro
     retorna (strTokens, strErrores, __codigo_correcto__, tabla_simbolos, pila_tipos, pila_operadores)"""
     global strErrores 
     global strTokens
+    global semantica_correcta
+    
+    semantica_correcta = True
 
     list_identificadores = []
     pila_operadores = []
@@ -254,7 +258,7 @@ def analizador(codigo : str = ''):
         retorna el error si si existe
         
         """
-        global strErrores
+        global strErrores, semantica_correcta
         for nombre in nombres:
             
             if nombre not in tabla_simbolos:
@@ -263,13 +267,14 @@ def analizador(codigo : str = ''):
                 print(f'agregando {nombre} como {tipo_temp}')
             else:
                 strErrores += f'ERROR SEM. Duplicidad de variable {nombre}\n'
+                semantica_correcta = False
                 pass
     
     def verificar_tipos_compatibles(tipo1: int, tipo2: int, operador: int):
         """ verifica la compatiblidad de dos tipos sobre un operador
         retorna el resultado, sino exite retorna float (1) y llama el error
         """
-        global strErrores
+        global strErrores, semantica_correcta
         renglon = (tipo1 * 5) + tipo2
 
         columna = 0
@@ -296,11 +301,17 @@ def analizador(codigo : str = ''):
             columna = 9
         elif operador == 115: # !=
             columna = 10
+        elif operador == 113: # >
+            columna = 11
+        elif operador == 111: # <
+            columna = 12
+        
         
         tipo_resultado = tabla_tipos[renglon][columna]
 
         if tipo_resultado == -1: # error entre tipos
             strErrores += f"ERROR SEM. entre tipos entre {tipos_to_strig[tipo1]} y {tipos_to_strig[tipo2]} en {tipos_to_strig[operador]}\n" # marcamos el error
+            semantica_correcta = False
             return 1 # parchamos con float (1)
 
         return tipo_resultado
@@ -316,10 +327,8 @@ def analizador(codigo : str = ''):
         pila_operadores.pop()
 
     def ejecutar_accion(n_accion: int):
+        global strErrores, semantica_correcta
         
-
-
-        global strErrores
         # accion 1
         if n_accion == 1001:
             variable = token[1]
@@ -333,6 +342,7 @@ def analizador(codigo : str = ''):
 
             else: # si no es constante y es una variable sin declarar
                 strErrores += f'ERROR SEM. Variable "{variable}" no declarada, añadida como float\n'
+                semantica_correcta = False
                 agregar_identificador(variable)
                 pila_tipos.append(tabla_simbolos[variable])
                 pila_tipos_estatica.append(tabla_simbolos[variable])
@@ -344,29 +354,31 @@ def analizador(codigo : str = ''):
 
         # accion 3
         elif n_accion == 1003:
-            if pila_operadores[-1] in {107, 108, 128}: # si se trata de un { *, /, % }
-                
-                tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
+            if not len(pila_operadores) == 0: 
+                if pila_operadores[-1] in {107, 108, 128, 118}: # si se trata de un { *, /, %, AND }
+                    
+                    tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
-                pila_tipos.pop()
-                pila_tipos.pop()
-                pila_tipos.append(tipo_temp)
-                pila_tipos_estatica.append(tipo_temp)
+                    pila_tipos.pop()
+                    pila_tipos.pop()
+                    pila_tipos.append(tipo_temp)
+                    pila_tipos_estatica.append(tipo_temp)
 
-                pila_operadores.pop()
+                    pila_operadores.pop()
 
         # accion 4
         elif n_accion == 1004:
-            if pila_operadores[-1] in {105, 106}: # si se trata de un { +, - }
-                
-                tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
+            if not len(pila_operadores) == 0: 
+                if pila_operadores[-1] in {105, 106, 117}: # si se trata de un { +, -, OR }
+                    
+                    tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
-                pila_tipos.pop()
-                pila_tipos.pop()
-                pila_tipos.append(tipo_temp)
-                pila_tipos_estatica.append(tipo_temp)
+                    pila_tipos.pop()
+                    pila_tipos.pop()
+                    pila_tipos.append(tipo_temp)
+                    pila_tipos_estatica.append(tipo_temp)
 
-                pila_operadores.pop()
+                    pila_operadores.pop()
         # accion 5
         elif n_accion == 1005 and token[1] in {'*', '/', '%'}:
             pila_operadores.append(token[0])
@@ -391,16 +403,41 @@ def analizador(codigo : str = ''):
         
         # accion 9
         elif n_accion == 1009:
-            if pila_operadores[-1] == 109:
+            if pila_operadores[-1] == 109: # si lo que sigue es una adignasion "="
                 
                 if pila_tipos[-2] != pila_tipos[-1]:
                     strErrores += f'ERROR SEM. entre tipos en "=" con {tipos_to_strig[pila_tipos[-2]]} y {tipos_to_strig[pila_tipos[-1]]}\n'
+                    semantica_correcta = False
 
                 pila_tipos.pop()
                 pila_tipos.pop()
                 pila_operadores.pop()
-        
+        # accion 10
+        elif n_accion == 1010:
+            if not len(pila_operadores) == 0: 
+                if pila_operadores[-1] in {110, 114, 112, 115, 113, 111}: # si se trata de un { +, -, OR }
+                    
+                    tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
+                    pila_tipos.pop()
+                    pila_tipos.pop()
+                    pila_tipos.append(tipo_temp)
+                    pila_tipos_estatica.append(tipo_temp)
+
+                    pila_operadores.pop()
+
+
+        # accion 11
+        elif n_accion == 1011 and token[1] in {'==', '>=', '<=', '!=', '>', '<'}:
+            pila_operadores.append(token[0])
+            pila_operadores_estatica.append(token[0])
+
+        elif n_accion == 1012:
+            if not pila_tipos[-1] == 4:
+                strErrores += 'ERROR SEM. expresión condicional no booleana.\n'
+                semantica_correcta= False,
+
+            pila_tipos.pop()
 
 
 
@@ -408,7 +445,6 @@ def analizador(codigo : str = ''):
 
     pila_prod = [100,0]
     sintaxis_correcta = False
-    semantica_correcta = True
 
 
     lex = a_lex.analizador_lex(codigo)
@@ -553,13 +589,14 @@ class mi_program
 def public A,B, res as float;
 def private X as char;
 def private nombre as string;
-def private nombre as int;
+def public bandera as bool;
+
 
 
 main()
-   input(A,B);
-   nombre = (X + Y) * X;
-   
+
+    # bandera = A == B ;
+
 end
 
 endclass
@@ -568,5 +605,6 @@ endclass
 
     strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores = analizador(codigo=codigo_prueba)
     print(strTokens, strErrores)
+    print(f'Codigo correcto: {codigo_correcto}')
 
     pass

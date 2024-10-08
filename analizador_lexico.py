@@ -257,7 +257,7 @@ class analizador_lex():
 
 if(__name__ == '__main__'):
 
-    cadena = '. myvar = 5+ 4.1 !if == _d , ; .'
+    cadena = '. myvar = 5+ 4.1 !if == _d , ; \n # fin \n 5.1'
 
     lex = analizador_lex(cadena)
     

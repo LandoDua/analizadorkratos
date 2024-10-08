@@ -19,6 +19,8 @@ code_to_strig = {
     114: '>=',
     112: '<=',
     115: '!=',
+    111: '<',
+    113: '>',
     -1: 'MFF',
 }
 
@@ -26,12 +28,12 @@ code_to_strig = {
 def main(page: ft.Page):
     page.title = 'Analizador Kratos'
     #page.window.width = 1500
-    page.window.height = 1060
+    page.window.height = 900
     page.fonts = {
         'JetBrains' : 'fonts/JetBrainsMono-VariableFont_wght.ttf'
     }
     page.theme = ft.Theme(
-        color_scheme_seed=ft.colors.CYAN,
+        color_scheme_seed=ft.colors.AMBER_600,
         font_family='JetBrains'
     )
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -40,7 +42,7 @@ def main(page: ft.Page):
 
     def clic_analizar(e = None):
         codigo = str(txt_codigo.value)
-        codigo = codigo.replace('\n', r' ')
+        # codigo = codigo.replace('\n', r' ')
         
         #print('CODIGO: ', codigo[0], type(codigo[0]))
 
@@ -53,7 +55,7 @@ def main(page: ft.Page):
         txt_errores.value = strErrores
         
         if codigo_correcto:
-            btnCompilar.disabled = False
+            btnCompilar.disabled = not codigo_correcto
 
         renglon_tabla_simbolos = ''
 
@@ -72,16 +74,24 @@ def main(page: ft.Page):
             txt_pila_operadores.value += f'{code_to_strig[operador]}, '
 
 
-
+        print(f'Condigo Correcto {codigo_correcto}')
 
         page.update()
+
+    def clic_compilar(e = None):
+        pass
+
+    def desactivar_btn_compilador(e = None):
+        if not btnCompilar.disabled:
+            btnCompilar.disabled = True
+            page.update()
 
     def limpiar_campos(e=None):
         txt_codigo.value = ''
         txt_tokens.value = ''
         txt_errores.value = ''
-        txt_pila_tipos = ''
-        txt_pila_operadores = ''
+        txt_pila_tipos.value = ''
+        txt_pila_operadores.value = ''
 
         page.title = 'Analizador Kratos' 
         txt_codigo.label = 'Codigo'
@@ -118,6 +128,7 @@ def main(page: ft.Page):
 
             archivo_temp = open(e.path + '.kcod', 'w')
             archivo_temp.write(txt_codigo.value)
+            
             page.title = e.path
             txt_codigo.label = archivo_temp.name.split('\\')[-1]
 
@@ -185,7 +196,7 @@ endclass
         title=ft.Text('Analizador Kratos 2.0', size=24),
         # bgcolor=ft.colors.PRIMARY,
         center_title=True,
-        actions=[btn_mode_theme, ft.Container(width=15)],
+        actions=[btn_mode_theme, ft.Container(width=15)], 
         
 
     )
@@ -208,7 +219,9 @@ endclass
         expand=True,
         expand_loose=True,
         bgcolor=ft.colors.SURFACE,
-        value= prueba_cod   
+        value= prueba_cod   ,
+        on_change=desactivar_btn_compilador,
+        
     )
 
     columna_izq = ft.Column(
@@ -324,7 +337,21 @@ endclass
         #expand=True,
         #expand_loose=True,
         # value='',
-        #read_only=True,
+        read_only=True,
+        bgcolor=ft.colors.SURFACE,
+        text_style= ft.TextStyle(
+            ft.colors.BLACK87,
+        ),
+        border_color=ft.colors.BLACK87,
+        border_width=2,
+    )
+
+    txt_pila_saltos = ft.TextField(
+        label="Pila de Saltos",
+        #expand=True,
+        #expand_loose=True,
+        # value='',
+        read_only=True,
         bgcolor=ft.colors.SURFACE,
         text_style= ft.TextStyle(
             ft.colors.BLACK87,
@@ -361,6 +388,7 @@ endclass
                     
                     txt_pila_operadores,
                     txt_pila_tipos,
+                    # txt_pila_saltos,
                     botones
                 ],
                 expand=True,
@@ -376,5 +404,6 @@ endclass
 
 
     txt_codigo.value = prueba_cod
+
 
 ft.app(main)
