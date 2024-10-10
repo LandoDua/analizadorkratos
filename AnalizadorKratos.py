@@ -1,6 +1,6 @@
 import analizador_lexico as a_lex
 
-
+# usada en Sintactico
 matrizPredictiva = (
     (601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,0   ,601 ,0   ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601 ,601),
     (602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,2   ,602 ,1   ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602 ,602),
@@ -39,6 +39,7 @@ matrizPredictiva = (
     (627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,75  ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627 ,627)
 )
 
+# usada en Sintactico, modificado para semantico
 vecProduccion = [
 [152, 9, 2, 101, 133, 1],
 [],
@@ -118,6 +119,7 @@ vecProduccion = [
 [144, 1012, 120, 15, 119, 143, 10, 142],
 ]
 
+# usada en Sintactico
 dict_errores_sintax = {
     600:"e600: ERROR DE SINTAXIS",
     601:"e601: ERROR DE SINTAXIS: Se esperaba lib o class",
@@ -149,6 +151,8 @@ dict_errores_sintax = {
     627:"e627: ERROR DE SINTAXIS: Se esperaba do",
 }
 
+# usada en Semantico
+# usamos un nuevo codigo para los tipos durante las operaciones del semantico
 dict_constantes_tipos = {
     134: 0, # int
     135: 1, # float
@@ -156,7 +160,8 @@ dict_constantes_tipos = {
     137: 3, # string
     138: 4, # bool
 }
-
+# usada en Semantico
+# convierte tokens numericos a string para mostrarlos
 tipos_to_strig = {
 	0: 'int',
 	1: 'float',
@@ -177,7 +182,8 @@ tipos_to_strig = {
     115: '!=',
     -1:  'MFF',
 }
-
+# usada en Semantico
+# taba de tipos compatibles en operaciones
 tabla_tipos = [
     #105, 106, 107, 108, 128, 117, 118, 110, 114, 112,	115  113  111
     #  +,   -,   *,   /,   %,  &&,  ||,  ==,  >=,  <=,  !=,   >,    <, 
@@ -237,6 +243,7 @@ def analizador(codigo : str = ''):
 
 
     def get_add_error_sintaxix(n_error = 0):
+        """Invoca el error de sintaxis necesario"""
         msg_error = dict_errores_sintax.get(n_error, 'DESCONOCIDO: ERROR DE SINTAXIS\n')
         return msg_error
 
@@ -245,8 +252,6 @@ def analizador(codigo : str = ''):
         """
         
         n = n_prod
-        #for elemento in vecProduccion[n]:
-        #    pila_prod.append(elemento)
         pila_prod.extend(vecProduccion[n])
         
 
@@ -278,7 +283,7 @@ def analizador(codigo : str = ''):
         renglon = (tipo1 * 5) + tipo2
 
         columna = 0
-
+        # asi determinamos la columana de la tabla de tipos
         if operador == 105:   # +
             columna = 0
         elif operador == 106: # -
@@ -316,7 +321,7 @@ def analizador(codigo : str = ''):
 
         return tipo_resultado
     
-    def ejecutar_operacion():
+    def ejecutar_operacion(): # en desuso
         tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
         pila_tipos.pop()
@@ -327,6 +332,8 @@ def analizador(codigo : str = ''):
         pila_operadores.pop()
 
     def ejecutar_accion(n_accion: int):
+        '''Ejecuta la accion semantica correspondiente en el tope de pila de operadores
+        (1000 -> accion 01)'''
         global strErrores, semantica_correcta
         
         # accion 1
@@ -432,6 +439,7 @@ def analizador(codigo : str = ''):
             pila_operadores.append(token[0])
             pila_operadores_estatica.append(token[0])
 
+        # accion 12, verificar expresion booleana
         elif n_accion == 1012:
             if not pila_tipos[-1] == 4:
                 strErrores += 'ERROR SEM. expresión condicional no booleana.\n'
@@ -440,13 +448,9 @@ def analizador(codigo : str = ''):
             pila_tipos.pop()
 
 
-
-
-
+    # inicializamos nuestro analizador
     pila_prod = [100,0]
     sintaxis_correcta = False
-
-
     lex = a_lex.analizador_lex(codigo)
 
     # primer token a analizar
@@ -458,7 +462,7 @@ def analizador(codigo : str = ''):
         strTokens += f'{token[1]}:\t {token[2]}\n'
 
     
-
+    # esta bandera cambia al modo agregar variables
     agregando_identificadores = False
 
     while True:
@@ -487,22 +491,17 @@ def analizador(codigo : str = ''):
 
         tope_pila = pila_prod[-1]
 
-        # cacheo de acciones semanticas
-        
 
-        # analizador SINTACTICO
+        ####################### analizador SINTACTICO #######################
         if tope_pila >= 100: # si se trata de un elemento terminal
             if tope_pila == 100 and token[0] == 100: # si ambos sin finales de cadena $
-                #print('SINTAXIS CORRECTA')
                 strTokens = f'SINTAXIS CORRECTA\n {strTokens} SINTAXIS CORRECTA\n'
                 sintaxis_correcta = True
                 break
 
             elif tope_pila == token[0]: # si son iguales
-                ultimo_token = token
-
-
-
+                
+                ########################################### bloque agregar variables (SEMANTICO) ###########################################
                 if token[0] == 148: # cuando nos llega un _def_, cambiamos a modo agregar variables
                     agregando_identificadores = True
 
@@ -510,11 +509,12 @@ def analizador(codigo : str = ''):
                     list_identificadores.append(token[1])
                     
 
-                if token[0] in {134, 135, 136, 137, 138} and agregando_identificadores:
+                if token[0] in {134, 135, 136, 137, 138} and agregando_identificadores: # declaramos las variables 
                     agregar_identificador(*list_identificadores, tipo=token[0])
-                    list_identificadores = []
+                    list_identificadores = [] # limpiamos la pila de identificadores
                     agregando_identificadores = False
-                    
+                
+                ######################################## fin bloque agregar variables (SEMANTICO) ###########################################    
 
                 
 
@@ -534,12 +534,7 @@ def analizador(codigo : str = ''):
 
             else: # si son diferentes
                 strErrores += token[1]+ ':\t' + get_add_error_sintaxix(0)
-                #print(f'::{token}::')
-                #print(f'::{tope_pila}::')
-                #print(f'::{pila_prod}::')
-                # Aqui va la la explicacion del error
-                #
-                #
+                
                 break
 
         else: # su es un NO terminal, es una nueva PRODUCCION
@@ -555,33 +550,28 @@ def analizador(codigo : str = ''):
                 strErrores += token[1]+ ':\t' + get_add_error_sintaxix(0)
                 break
 
+
+        
+        ########################################### bloque Cachear acciones (SEMANTICO) ########################################### 
         while pila_prod[-1] >= 1000:
-            # print(pila_prod)
-            # print( f"ACCAccion semantica encontrada {pila_prod[-1]} con {token[2]}\n")
             strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
             # aqui invocamos la accion
             ejecutar_accion(pila_prod[-1])
 
             pila_prod.pop()
             tope_pila= pila_prod[-1]
+        ######################################## fin bloque Cachear acciones (SEMANTICO) ########################################### 
 
-
-
-
-
-    
-    
-    
-
-
-    #print(strTokens, strTokens)  
+ 
     print(tabla_simbolos)
-    #strTokens += f'{token[1]}:\t {token[2]}\n'
+    #  por ultimo determinamos si el codigo en su totalidad es correcto
     codigo_correcto = sintaxis_correcta and semantica_correcta
 
     return (strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos_estatica, pila_operadores_estatica)
 
 
+
+########################################### bloque pruebas ########################################### 
 if(__name__ == '__main__'):
 
     codigo_prueba = """
@@ -595,7 +585,7 @@ def public bandera as bool;
 
 main()
 
-    # bandera = A == B ;
+    bandera = A == B ;
 
 end
 
