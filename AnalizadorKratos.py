@@ -1,3 +1,4 @@
+# Analizador Kratos con semantico
 import analizador_lexico as a_lex
 
 # usada en Sintactico
