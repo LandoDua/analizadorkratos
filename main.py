@@ -56,6 +56,7 @@ def main(page: ft.Page):
         
         if codigo_correcto:
             btnCompilar.disabled = not codigo_correcto
+            page.open(dlg_codigo_correcto)
 
         renglon_tabla_simbolos = ''
 
@@ -206,6 +207,17 @@ endclass
     file_picker_saver = ft.FilePicker(on_result=guarda_archivo)
     page.overlay.append(file_picker_saver)
     page.update()
+
+    dlg_codigo_correcto = ft.AlertDialog(
+        title=ft.Text('Código correcto', ),
+        content=ft.Text('El codigo fue analizado y está listo para ser compilado.'),
+        actions=[
+            ft.TextButton(
+                text='Aceptar',
+                on_click= lambda _: page.close(dlg_codigo_correcto),
+            )
+        ]
+    )
 
     
      
