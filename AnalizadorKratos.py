@@ -559,7 +559,7 @@ def analizador(codigo : str = ''):
         
         ########################################### bloque Cachear acciones (SEMANTICO) ########################################### 
         while pila_prod[-1] >= 1000:
-            strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
+            #strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
             # aqui invocamos la accion
             ejecutar_accion(pila_prod[-1])
 

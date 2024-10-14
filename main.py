@@ -42,9 +42,7 @@ def main(page: ft.Page):
 
     def clic_analizar(e = None):
         codigo = str(txt_codigo.value)
-        # codigo = codigo.replace('\n', r' ')
-        
-        #print('CODIGO: ', codigo[0], type(codigo[0]))
+        # codigo = codigo.replace('\n', r' ') 
 
         strTokens = ''
         strTokens , strErrores, codigo_correcto, tabla_simbolos, pila_tipos, pila_operadores = AnalizadorKratos.analizador(codigo)
@@ -57,6 +55,8 @@ def main(page: ft.Page):
         if codigo_correcto:
             btnCompilar.disabled = not codigo_correcto
             page.open(dlg_codigo_correcto)
+        
+        txt_tokens.value = strTokens
 
         renglon_tabla_simbolos = ''
 
@@ -89,12 +89,13 @@ def main(page: ft.Page):
 
     def limpiar_campos(e=None):
         txt_codigo.value = ''
+        txt_tokens.value = ''
         txt_tabla_simbolos.value = ''
         txt_errores.value = ''
         txt_pila_tipos.value = ''
         txt_pila_operadores.value = ''
 
-        page.title = 'Analizador Kratos' 
+        page.title = 'Analizador Kratos'  
         txt_codigo.label = 'Codigo'
 
         page.update()
@@ -263,6 +264,24 @@ endclass
         height=400,
     )
 
+    txt_tokens = ft.TextField(
+        label="// Tokens",
+        multiline=True,
+        min_lines=30,
+        max_lines=30,
+        expand=True,
+        expand_loose=True,
+        value='',
+        read_only=True,
+        bgcolor=ft.colors.SURFACE,
+        text_style= ft.TextStyle(
+            ft.colors.LIGHT_BLUE_800,
+        ),
+        border_color=ft.colors.LIGHT_BLUE_700,
+        border_width=2,
+        height=400,
+    )
+
     txt_errores = ft.TextField(
         label="// Errores",
         multiline=True,
@@ -278,7 +297,10 @@ endclass
     )
 
     columna_der = ft.Column(
-        controls=[txt_tabla_simbolos, txt_errores],
+        controls=[
+            ft.Row([txt_tokens,txt_tabla_simbolos]), 
+            txt_errores
+            ],
         expand=True,
         col={"sm": 6},
         height=700
