@@ -156,9 +156,13 @@ dict_errores_sintax = {
 # usamos un nuevo codigo para los tipos durante las operaciones del semantico
 dict_constantes_tipos = {
     134: 0, # int
+    102: 0, # cte-int
     135: 1, # float
+    103: 1, # cte-float
     136: 2, # char
+    125: 2, # cte-char
     137: 3, # string
+    126: 3, # cte-string
     138: 4, # bool
 }
 # usada en Semantico
@@ -236,7 +240,7 @@ def analizador(codigo : str = ''):
     tabla_simbolos = dict()
     ultimo_token = 0 # solo lo usamos para aculumar el ultimo token analizado antes de una acción
 
-    codigo = codigo.replace('\n', ' ')
+    #codigo = codigo.replace('\n', ' ')
     #print('CODIGO: ', codigo)
     strTokens = ''
     strErrores =  ''  
@@ -363,7 +367,7 @@ def analizador(codigo : str = ''):
         # accion 3
         elif n_accion == 1003:
             if not len(pila_operadores) == 0: 
-                if pila_operadores[-1] in {107, 108, 128, 118}: # si se trata de un { *, /, %, AND }
+                if pila_operadores[-1] in {107, 108, 128, 117}: # si se trata de un { *, /, %, AND }
                     
                     tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
@@ -377,7 +381,7 @@ def analizador(codigo : str = ''):
         # accion 4
         elif n_accion == 1004:
             if not len(pila_operadores) == 0: 
-                if pila_operadores[-1] in {105, 106, 117}: # si se trata de un { +, -, OR }
+                if pila_operadores[-1] in {105, 106, 118}: # si se trata de un { +, -, OR }
                     
                     tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
@@ -388,12 +392,12 @@ def analizador(codigo : str = ''):
 
                     pila_operadores.pop()
         # accion 5
-        elif n_accion == 1005 and token[1] in {'*', '/', '%'}:
+        elif n_accion == 1005 and token[1] in {'*', '/', '%', '&&'}:
             pila_operadores.append(token[0])
             pila_operadores_estatica.append(token[0])
 
         # accion 6
-        elif n_accion == 1006 and token[1] in {'+', '-',}:
+        elif n_accion == 1006 and token[1] in {'+', '-', '||'}:
             pila_operadores.append(token[0])
             pila_operadores_estatica.append(token[0])
 

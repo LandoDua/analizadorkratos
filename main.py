@@ -60,11 +60,11 @@ def main(page: ft.Page):
 
         renglon_tabla_simbolos = ''
 
-        txt_tokens.value = ''
+        txt_tabla_simbolos.value = ''
         for variable in tabla_simbolos:
             tipo = tabla_simbolos[variable]
             renglon_tabla_simbolos = f'{variable}:\t {code_to_strig[tipo]}\n'
-            txt_tokens.value += renglon_tabla_simbolos
+            txt_tabla_simbolos.value += renglon_tabla_simbolos
 
         txt_pila_tipos.value = ''
         for tipo in pila_tipos:
@@ -75,7 +75,7 @@ def main(page: ft.Page):
             txt_pila_operadores.value += f'{code_to_strig[operador]}, '
 
 
-        print(f'Condigo Correcto {codigo_correcto}')
+        print(f'Codigo Correcto {codigo_correcto}')
 
         page.update()
 
@@ -89,7 +89,7 @@ def main(page: ft.Page):
 
     def limpiar_campos(e=None):
         txt_codigo.value = ''
-        txt_tokens.value = ''
+        txt_tabla_simbolos.value = ''
         txt_errores.value = ''
         txt_pila_tipos.value = ''
         txt_pila_operadores.value = ''
@@ -241,9 +241,11 @@ endclass
         expand=True,
         col={"sm": 6},
         height=700
-    ) 
+    )
+    
+     
 
-    txt_tokens = ft.TextField(
+    txt_tabla_simbolos = ft.TextField(
         label="// Tabla de Simbolos",
         multiline=True,
         min_lines=30,
@@ -276,7 +278,7 @@ endclass
     )
 
     columna_der = ft.Column(
-        controls=[txt_tokens, txt_errores],
+        controls=[txt_tabla_simbolos, txt_errores],
         expand=True,
         col={"sm": 6},
         height=700
@@ -334,7 +336,7 @@ endclass
         label="Pila de Operadores",
         #expand=True,
         #expand_loose=True,
-        # value='',
+        # value='', 
         read_only=True,
         bgcolor=ft.colors.SURFACE,
         text_style= ft.TextStyle(
