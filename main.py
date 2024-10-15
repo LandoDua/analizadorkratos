@@ -28,7 +28,7 @@ code_to_strig = {
 def main(page: ft.Page):
     page.title = 'Analizador Kratos'
     #page.window.width = 1500
-    page.window.height = 900
+    page.window.height = '900'
     page.fonts = {
         'JetBrains' : 'fonts/JetBrainsMono-VariableFont_wght.ttf'
     }
