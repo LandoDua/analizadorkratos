@@ -240,8 +240,6 @@ def analizador(codigo : str = ''):
     tabla_simbolos = dict()
     ultimo_token = 0 # solo lo usamos para aculumar el ultimo token analizado antes de una acción
 
-    #codigo = codigo.replace('\n', ' ')
-    #print('CODIGO: ', codigo)
     strTokens = ''
     strErrores =  ''  
 
@@ -267,7 +265,7 @@ def analizador(codigo : str = ''):
         agrega el nuevo identificador con tipo si no existe
         retorna el error si si existe
         
-        """
+        """  
         global strErrores, semantica_correcta
         for nombre in nombres:
             
@@ -427,7 +425,7 @@ def analizador(codigo : str = ''):
         # accion 10
         elif n_accion == 1010:
             if not len(pila_operadores) == 0: 
-                if pila_operadores[-1] in {110, 114, 112, 115, 113, 111}: # si se trata de un { +, -, OR }
+                if pila_operadores[-1] in {110, 114, 112, 115, 113, 111}:
                     
                     tipo_temp = verificar_tipos_compatibles(pila_tipos[-2], pila_tipos[-1],pila_operadores[-1])
 
@@ -559,7 +557,6 @@ def analizador(codigo : str = ''):
         
         ########################################### bloque Cachear acciones (SEMANTICO) ########################################### 
         while pila_prod[-1] >= 1000:
-            #strTokens += f"Accion semantica encontrada {pila_prod[-1]} con {token[1]}\n"
             # aqui invocamos la accion
             ejecutar_accion(pila_prod[-1])
 
