@@ -141,7 +141,7 @@ def main(page: ft.Page):
             ft.Text(f"Guardado en: {e.path}", color=ft.colors.ON_ERROR),
             bgcolor=ft.colors.ERROR
             )
-
+ 
             page.snack_bar.open = True
 
             page.update()

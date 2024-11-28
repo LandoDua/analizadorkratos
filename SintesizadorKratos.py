@@ -112,13 +112,13 @@ vecProduccion = [
 [12, 1001],
 [120, 4, 101, 119, 146],
 [120, 14, 15, 119, 147],
-[159, 32, 31, 10, 1012, 120, 15, 119, 139],
+[1107, 159, 32, 31, 10, 1106, 1012, 120, 15, 119, 1105, 139],
 [],
-[31, 10, 1012, 120, 15, 119, 141],
-[10, 140],
+[31, 1111, 10, 1110 ,1012, 120, 15, 119, 1108, 141],
+[1109, 10, 1108, 140],
 [],
-[160, 10, 1012, 120, 15, 119, 145],
-[144, 1012, 120, 15, 119, 143, 10, 142],
+[1208, 160, 10, 1207, 1012, 120, 15, 119, 1205, 145],
+[1306, 144, 1012, 120, 15, 119, 143, 10, 1305, 142],
 ]
 
 # usada en Sintactico
@@ -406,7 +406,7 @@ def analizador(codigo : str = ''):
     def ejecutar_accion(n_accion: int):
         '''Ejecuta la accion semantica correspondiente en el tope de pila de operadores
         (1000 -> accion 01)'''
-        global strErrores, semantica_correcta, contador_cuatruplo 
+        global strErrores, semantica_correcta, contador_cuatruplo
         
         # accion 1
         if n_accion == 1001:
@@ -583,6 +583,86 @@ def analizador(codigo : str = ''):
             pila_tipos.pop()
 
 
+        elif n_accion == 1205:
+            pila_saltos.append(contador_cuatruplo)
+            
+
+        elif n_accion == 1207:
+            cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
+            pila_saltos.append(contador_cuatruplo-1)
+            contador_cuatruplo += 1
+
+            # pila_saltos.pop() 
+            pila_operandos.pop()
+
+        elif n_accion == 1208:
+            cuatruplos.append([contador_cuatruplo, 'SI', None, None, pila_saltos[-1]])
+
+            contador_cuatruplo += 1
+            pila_saltos.pop() 
+
+            cuatruplos[pila_saltos[-1]+1][4] = contador_cuatruplo
+            pila_saltos.pop()
+
+        ### ACCIONES DOWHILE ###
+        elif n_accion == 1305:
+            pila_saltos.append(contador_cuatruplo);
+    
+        elif n_accion == 1306:
+            cuatruplos.append([contador_cuatruplo, 'SV', pila_operandos[-1], None, pila_saltos[-1]])
+            contador_cuatruplo += 1
+            pila_saltos.pop()
+            pila_operandos.pop()
+
+        ### ACCIONES IF ###
+
+        elif n_accion == 1105:
+            pila_operadores.append(-1)
+
+        elif n_accion == 1106:
+            cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
+            pila_saltos.append(contador_cuatruplo-1)
+
+            contador_cuatruplo += 1
+            # pila_saltos.pop() 
+            pila_operandos.pop()
+
+        elif n_accion == 1107:
+            cuatruplos[pila_saltos[-1]+1][4] = contador_cuatruplo
+            pila_saltos.pop()
+
+            pila_operadores.pop() # quitar marca de fondo falso
+
+        elif n_accion == 1108:
+            cuatruplos.append([contador_cuatruplo, 'SI', None, None, None])
+            pila_saltos.append(contador_cuatruplo-1)
+            contador_cuatruplo += 1
+
+            cuatruplos[pila_saltos[-2]+1][4] = contador_cuatruplo
+            pila_saltos.pop(-2)
+
+        elif n_accion == 1110:
+            cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
+            pila_saltos.append(contador_cuatruplo-1)
+            contador_cuatruplo += 1
+
+        elif n_accion == 1111:
+            cuatruplos[pila_saltos[-2]+1][4] = contador_cuatruplo
+            pila_saltos.pop(-2)
+
+            # cuatruplos.append([contador_cuatruplo, 'SI', None, None, None])
+            # pila_saltos.append(contador_cuatruplo-1)
+            # contador_cuatruplo += 1
+
+            # cuatruplos[pila_saltos[-2]+1][4] = contador_cuatruplo
+            # pila_saltos.pop(-2)
+            
+
+
+
+
+
+
     # inicializamos nuestro analizador
     pila_prod = [100,0]
     sintaxis_correcta = False
@@ -727,7 +807,26 @@ main()
 
     bandera = (A > B) || (A == B);
 
+    while(A > B)
+
+        B = B + 1; 
+
+
+    endwhile
+
+    
+    if(A==1)
+        B = 1;
+    elseif (A == 2)
+        nombre = "orlande";
+    else
+        A = 3;
+    endif
+    
+
 end
+
+
 
 endclass
 
