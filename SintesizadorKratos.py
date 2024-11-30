@@ -299,6 +299,7 @@ def analizador(codigo : str = ''):
         [None, None, None, None, None]
     ] 
     pila_saltos = []
+    pila_saltos_estatica = []
     pila_operandos = []
 
     tabla_variables = {}
@@ -585,11 +586,13 @@ def analizador(codigo : str = ''):
 
         elif n_accion == 1205:
             pila_saltos.append(contador_cuatruplo)
+            pila_saltos_estatica.append(contador_cuatruplo)
             
 
         elif n_accion == 1207:
             cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
             pila_saltos.append(contador_cuatruplo-1)
+            pila_saltos_estatica.append(contador_cuatruplo-1)
             contador_cuatruplo += 1
 
             # pila_saltos.pop() 
@@ -607,6 +610,7 @@ def analizador(codigo : str = ''):
         ### ACCIONES DOWHILE ###
         elif n_accion == 1305:
             pila_saltos.append(contador_cuatruplo);
+            pila_saltos_estatica.append(contador_cuatruplo);
     
         elif n_accion == 1306:
             cuatruplos.append([contador_cuatruplo, 'SV', pila_operandos[-1], None, pila_saltos[-1]])
@@ -617,7 +621,8 @@ def analizador(codigo : str = ''):
         ### ACCIONES IF ###
 
         elif n_accion == 1105:
-            pila_operadores.append(-1)
+            pila_operadores.append("MFF")
+            pila_operadores_estatica.append("MFF")
 
         elif n_accion == 1106:
             cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
@@ -636,6 +641,7 @@ def analizador(codigo : str = ''):
         elif n_accion == 1108:
             cuatruplos.append([contador_cuatruplo, 'SI', None, None, None])
             pila_saltos.append(contador_cuatruplo-1)
+            pila_saltos_estatica.append(contador_cuatruplo-1)
             contador_cuatruplo += 1
 
             cuatruplos[pila_saltos[-2]+1][4] = contador_cuatruplo
@@ -644,6 +650,7 @@ def analizador(codigo : str = ''):
         elif n_accion == 1110:
             cuatruplos.append([contador_cuatruplo, 'SF', pila_operandos[-1], None, None])
             pila_saltos.append(contador_cuatruplo-1)
+            pila_saltos_estatica.append(contador_cuatruplo-1)
             contador_cuatruplo += 1
 
         elif n_accion == 1111:
@@ -781,7 +788,10 @@ def analizador(codigo : str = ''):
     #  por ultimo determinamos si el codigo en su totalidad es correcto
     codigo_correcto = sintaxis_correcta and semantica_correcta
 
-    return (tabla_variables, cuatruplos, tabla_simbolos_temporales)
+
+    generador_temps.contador = 0
+    contador_cuatruplo = 0
+    return (tabla_variables, cuatruplos, tabla_simbolos_temporales, pila_saltos_estatica)
 
 
 
@@ -832,7 +842,7 @@ endclass
 
 """
 
-    tabla_variables, lista_cuatruplos, tabla_temporales = analizador(codigo=codigo_prueba)
+    tabla_variables, lista_cuatruplos, tabla_temporales, pila_saltos = analizador(codigo=codigo_prueba)
     print(tabla_variables)
     for cuatruplo in lista_cuatruplos:
         print('[', end=' ')
@@ -843,6 +853,7 @@ endclass
         print(']')
 
     print(tabla_temporales)
+    print(pila_saltos)
 
 
     # pprint.pprint(tabla_variables)
