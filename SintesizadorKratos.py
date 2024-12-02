@@ -51,7 +51,7 @@ vecProduccion = [
 [154],
 [153],
 [155],
-[4, 101, 124],
+[4, 101, 1001, 124],
 [],
 [6, 151],
 [],
@@ -110,8 +110,8 @@ vecProduccion = [
 [126, 1001],
 [120, 1008,  15, 119, 1007],
 [12, 1001],
-[120, 4, 101, 119, 146],
-[120, 14, 15, 119, 147],
+[1402, 120, 4, 101, 1001,  119, 1401, 146],
+[1403, 120, 14, 15, 119, 1401, 147],
 [1107, 159, 32, 31, 10, 1106, 1012, 120, 15, 119, 1105, 139],
 [],
 [31, 1111, 10, 1110 ,1012, 120, 15, 119, 1108, 141],
@@ -665,8 +665,41 @@ def analizador(codigo : str = ''):
             # pila_saltos.pop(-2)
             
 
+        elif n_accion == 1401:
+            pila_operandos.append("MFF")
+            print('1401:::::', pila_operandos[-1])
 
+        elif n_accion == 1402:
+            
+            pila_temp =  []
+            print('1402:::::', pila_operandos)
+            while not pila_operandos[-1] == 'MFF':
 
+                
+                pila_temp.append(pila_operandos[-1])
+                pila_operandos.pop()
+
+            pila_temp.reverse()
+
+            for id_temp in pila_temp:
+                cuatruplos.append([contador_cuatruplo, 'Input', None, None, id_temp])
+                contador_cuatruplo += 1
+
+            pila_operandos.pop()
+
+        elif n_accion == 1403:
+            pila_temp =  []
+            while not pila_operandos[-1] == 'MFF':
+                pila_temp.append(pila_operandos[-1])
+                pila_operandos.pop()
+
+            pila_temp.reverse()
+
+            for id_temp in pila_temp:
+                cuatruplos.append([contador_cuatruplo, 'Output', None, None, id_temp])
+                contador_cuatruplo += 1
+
+            pila_operandos.pop()
 
 
 
@@ -832,7 +865,9 @@ main()
     else
         A = 3;
     endif
-    
+
+    input(A, B);
+    output(X, A+1);
 
 end
 
