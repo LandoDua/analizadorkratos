@@ -589,7 +589,7 @@ endclass
 
     contenedor_animado = ft.AnimatedSwitcher(
         content=contenedor_analizador,
-        transition=ft.AnimatedSwitcherTransition.FADE,
+        transition=ft.AnimatedSwitcherTransition.SCALE,
         duration=500,
         reverse_duration=400,
         switch_in_curve=ft.AnimationCurve.BOUNCE_OUT,

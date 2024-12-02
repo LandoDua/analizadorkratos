@@ -790,7 +790,7 @@ def analizador(codigo : str = ''):
 
 
     generador_temps.contador = 0
-    contador_cuatruplo = 0
+    contador_cuatruplo = 1
     return (tabla_variables, cuatruplos, tabla_simbolos_temporales, pila_saltos_estatica)
 
 
